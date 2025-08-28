@@ -1,0 +1,14 @@
+[package]
+name = "rest_api_chm"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+actix-web = "4.11.0"
+chrono = { version = "0.4.41", features = ["serde"] }
+serde = { version = "1.0.219", features = ["derive"] }
+serde_json = "1.0.142"
+uuid = { version = "1.18.0", features = ["v4", "serde"] }
+tokio = { version = "1.47.1", features = ["fs"] }
+actix-files = "0.6.6"
+serde_with = { version = "3.14.0", features = ["json"] }
