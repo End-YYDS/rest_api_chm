@@ -17,6 +17,9 @@ pub fn module_scope() -> Scope {
         .service(_post_module_root)
         .service(_put_module_root)
         .service(_patch_module_root)
+        .service(_delete_module_root)
+        .service(_post_module_action_enable)
+        .service(_post_module_action_disable)
 }
 
 #[get("")]
@@ -89,4 +92,36 @@ async fn _delete_module_root(
         module: DeleteModuleReport { delete, not_delete, delete_length, not_delete_length },
     })
 }
-// TODO: 模組啟用開始
+#[post("/action/enable")]
+async fn _post_module_action_enable(
+    data: web::Json<DeleteModuleRequest>,
+) -> web::Json<PutModuleResponse> {
+    dbg!(&data);
+    let success = data.modules.clone();
+    let fail = vec![];
+    web::Json(PutModuleResponse {
+        module: PutModuleReport {
+            success_length: success.len(),
+            fail_length: fail.len(),
+            success,
+            fail,
+        },
+    })
+}
+
+#[post("/action/disable")]
+async fn _post_module_action_disable(
+    data: web::Json<DeleteModuleRequest>,
+) -> web::Json<PutModuleResponse> {
+    dbg!(&data);
+    let success = data.modules.clone();
+    let fail = vec![];
+    web::Json(PutModuleResponse {
+        module: PutModuleReport {
+            success_length: success.len(),
+            fail_length: fail.len(),
+            success,
+            fail,
+        },
+    })
+}
