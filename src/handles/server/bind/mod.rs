@@ -16,8 +16,9 @@ use crate::{
         types::BindResponse,
     },
 };
-use actix_web::{post, web};
+use actix_web::{get, post, web};
 
+#[get("")]
 async fn bind_root(_data: web::Json<UuidRequest>) -> web::Json<BindResponse> {
     let test_date = BindResponse {
         common_info: CommonInfo {
@@ -66,10 +67,7 @@ async fn bind_root(_data: web::Json<UuidRequest>) -> web::Json<BindResponse> {
 }
 
 pub fn bind_scope() -> actix_web::Scope {
-    actix_web::web::scope("/bind")
-        .route("", web::get().to(bind_root))
-        .route("/", web::get().to(bind_root))
-        .service(action_scope())
+    actix_web::web::scope("/bind").service(bind_root).service(action_scope())
 }
 
 fn action_scope() -> actix_web::Scope {

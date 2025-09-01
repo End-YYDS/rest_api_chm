@@ -1,4 +1,4 @@
-use actix_web::{post, web};
+use actix_web::{get, post, web};
 
 use crate::{
     commons::{ResponseResult, ResponseType, UuidRequest},
@@ -8,6 +8,7 @@ use crate::{
 mod logs;
 mod types;
 
+#[get("")]
 async fn dhcp_root(data: web::Json<UuidRequest>) -> web::Json<DHCPResponse> {
     dbg!(data);
     web::Json(generate_test_dhcp_response())
@@ -71,10 +72,7 @@ fn generate_test_dhcp_response() -> DHCPResponse {
 }
 
 pub fn dhcp_scope() -> actix_web::Scope {
-    actix_web::web::scope("/dhcp")
-        .route("", web::get().to(dhcp_root))
-        .route("/", web::get().to(dhcp_root))
-        .service(action_scope())
+    actix_web::web::scope("/dhcp").service(dhcp_root).service(action_scope())
 }
 
 fn action_scope() -> actix_web::Scope {

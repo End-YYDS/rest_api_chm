@@ -1,7 +1,7 @@
 mod logs;
 mod types;
 
-use actix_web::{post, web};
+use actix_web::{get, post, web};
 
 use crate::{
     commons::{
@@ -17,6 +17,7 @@ use crate::{
     },
 };
 
+#[get("")]
 async fn ldap_root(data: web::Json<UuidRequest>) -> web::Json<LDAPResponse> {
     dbg!(data);
     web::Json(generate_test_ldap_response())
@@ -71,10 +72,7 @@ fn generate_test_ldap_response() -> LDAPResponse {
 }
 
 pub fn ldap_scope() -> actix_web::Scope {
-    actix_web::web::scope("/ldap")
-        .route("", web::get().to(ldap_root))
-        .route("/", web::get().to(ldap_root))
-        .service(action_scope())
+    actix_web::web::scope("/ldap").service(ldap_root).service(action_scope())
 }
 
 fn action_scope() -> actix_web::Scope {

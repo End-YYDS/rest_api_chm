@@ -1,4 +1,4 @@
-use actix_web::{post, web};
+use actix_web::{get, post, web};
 
 use crate::{
     commons::{
@@ -23,6 +23,7 @@ mod logs;
 mod session;
 mod types;
 
+#[get("")]
 async fn ftp_root(data: web::Json<UuidRequest>) -> web::Json<FTPResponse> {
     dbg!(data);
     web::Json(generate_test_ftp_response())
@@ -93,10 +94,7 @@ fn generate_test_ftp_response() -> FTPResponse {
 }
 
 pub fn ftp_scope() -> actix_web::Scope {
-    actix_web::web::scope("/ftp")
-        .route("", web::get().to(ftp_root))
-        .route("/", web::get().to(ftp_root))
-        .service(action_scope())
+    actix_web::web::scope("/ftp").service(ftp_root).service(action_scope())
 }
 
 fn action_scope() -> actix_web::Scope {

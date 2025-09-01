@@ -1,4 +1,5 @@
 use actix_web::{get, post, web};
+use std::collections::HashMap;
 
 use crate::{
     commons::{CommonInfo, ResponseResult, ResponseType, Status},
@@ -30,7 +31,7 @@ mod ssh;
 mod stall;
 
 pub fn server_scope() -> actix_web::Scope {
-    actix_web::web::scope("/server")
+    web::scope("/server")
         .service(apache_scope())
         .service(bind_scope())
         .service(dhcp_scope())
@@ -50,31 +51,35 @@ pub fn server_scope() -> actix_web::Scope {
 async fn installed(data: web::Json<stalled_request>) -> web::Json<stalledResponse> {
     let server_name = &data.server;
     // Example test data
-    let pcs = Pcs {
-        uuids: CommonInfo {
-            hostname: format!("{}-install-host", server_name),
-            status:   Status::Active,
-            cpu:      0.0,
-            memory:   0.0,
-        },
+    let mut data: HashMap<String, CommonInfo> = HashMap::new();
+    let test = CommonInfo {
+        hostname: format!("{}-install-host", server_name),
+        status:   Status::Active,
+        cpu:      0.0,
+        memory:   0.0,
     };
-    let response = stalledResponse { pcs, length: 0 };
+    data.insert(String::from("server_name"), test);
+    let pcs = Pcs { uuids: data };
+    let length = pcs.uuids.len();
+    let response = stalledResponse { pcs, length };
     web::Json(response)
 }
 
 #[get("/noinstall")]
 async fn noinstall(data: web::Json<stalled_request>) -> web::Json<stalledResponse> {
     let server_name = &data.server;
-    // Example test data
-    let pcs = Pcs {
-        uuids: CommonInfo {
-            hostname: format!("{}-noinstall-host", server_name),
-            status:   Status::Stopped,
-            cpu:      0.0,
-            memory:   0.0,
-        },
+    let test = CommonInfo {
+        hostname: format!("{}-noinstall-host", server_name),
+        status:   Status::Stopped,
+        cpu:      0.0,
+        memory:   0.0,
     };
-    let response = stalledResponse { pcs, length: 0 };
+    let mut data = HashMap::new();
+    data.insert(String::from("server_name"), test);
+    // Example test data
+    let pcs = Pcs { uuids: data };
+    let length = pcs.uuids.len();
+    let response = stalledResponse { pcs, length };
     web::Json(response)
 }
 

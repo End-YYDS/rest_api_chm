@@ -8,7 +8,7 @@ pub fn config_scope() -> Scope {
 }
 
 /// GET /api/config/?Name=ReloadRate
-#[get("/")]
+#[get("")]
 async fn _get_config_root(query: web::Json<GetConfigQuery>) -> HttpResponse {
     // TODO: 從 DB / 檔案 / env 取得真值
     let reload_rate = 1000_i64;

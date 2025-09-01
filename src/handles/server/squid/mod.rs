@@ -1,4 +1,4 @@
-use actix_web::{post, web};
+use actix_web::{get, post, web};
 
 use crate::{
     commons::{
@@ -13,6 +13,7 @@ use crate::{
 mod logs;
 mod types;
 
+#[get("")]
 async fn squid_root(data: web::Json<UuidRequest>) -> web::Json<SquidResponse> {
     dbg!(data);
     web::Json(generate_test_squid_response())
@@ -53,10 +54,7 @@ fn generate_test_squid_response() -> SquidResponse {
 }
 
 pub fn squid_scope() -> actix_web::Scope {
-    actix_web::web::scope("/squid")
-        .route("", web::get().to(squid_root))
-        .route("/", web::get().to(squid_root))
-        .service(action_scope())
+    web::scope("/squid").service(squid_root).service(action_scope())
 }
 
 fn action_scope() -> actix_web::Scope {

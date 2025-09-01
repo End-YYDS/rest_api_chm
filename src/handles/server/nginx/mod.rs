@@ -1,4 +1,4 @@
-use actix_web::{post, web};
+use actix_web::{get, post, web};
 
 use crate::{
     commons::{
@@ -16,6 +16,7 @@ mod connections;
 mod logs;
 mod types;
 
+#[get("")]
 async fn nginx_root(data: web::Json<UuidRequest>) -> web::Json<NginxResponse> {
     dbg!(data);
     web::Json(generate_test_nginx_response())
@@ -76,10 +77,7 @@ fn generate_test_nginx_response() -> NginxResponse {
 }
 
 pub fn nginx_scope() -> actix_web::Scope {
-    actix_web::web::scope("/nginx")
-        .route("", web::get().to(nginx_root))
-        .route("/", web::get().to(nginx_root))
-        .service(action_scope())
+    actix_web::web::scope("/nginx").service(nginx_root).service(action_scope())
 }
 
 fn action_scope() -> actix_web::Scope {

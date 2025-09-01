@@ -1,4 +1,4 @@
-use actix_web::{post, web};
+use actix_web::{get, post, web};
 
 use crate::{
     commons::{
@@ -18,6 +18,7 @@ mod last_login;
 mod logs;
 mod types;
 
+#[get("")]
 async fn ssh_root(data: web::Json<UuidRequest>) -> web::Json<SSHResponse> {
     dbg!(data);
     web::Json(generate_test_ssh_response())
@@ -64,10 +65,7 @@ fn generate_test_ssh_response() -> SSHResponse {
 }
 
 pub fn ssh_scope() -> actix_web::Scope {
-    actix_web::web::scope("/ssh")
-        .route("", web::get().to(ssh_root))
-        .route("/", web::get().to(ssh_root))
-        .service(action_scope())
+    actix_web::web::scope("/ssh").service(ssh_root).service(action_scope())
 }
 
 fn action_scope() -> actix_web::Scope {

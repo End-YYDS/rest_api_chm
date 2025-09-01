@@ -64,9 +64,12 @@ async fn all() -> web::Json<PcInformation> {
 // }
 
 #[get("/specific")]
-async fn specific(q: web::Json<SpecificRequest>) -> String {
+async fn specific(q: web::Json<SpecificRequest>) -> web::Json<PcInformation> {
     dbg!(&q);
-    format!("got: {:?}", q.uuid)
+    web::Json(PcInformation {
+        pcs:    Pcs { uuid: Uuid { hostname: "localhost2".to_string(), ip: "127.0.0.1".into() } },
+        length: 1,
+    })
 }
 
 async fn delete_pc(data: web::Json<DeletePcRequest>) -> web::Json<ResponseResult> {
@@ -76,11 +79,13 @@ async fn delete_pc(data: web::Json<DeletePcRequest>) -> web::Json<ResponseResult
 
 #[post("/reboot")]
 async fn reboot(data: web::Json<UuidsRequest>) -> web::Json<ResponseResult> {
+    dbg!(&data);
     web::Json(ResponseResult { r#type: ResponseType::Ok, message: "Reboot PC".to_string() })
 }
 
 #[post("/shutdown")]
 async fn shutdown(data: web::Json<UuidsRequest>) -> web::Json<ResponseResult> {
+    dbg!(&data);
     web::Json(ResponseResult { r#type: ResponseType::Ok, message: "Shutdown PC".to_string() })
 }
 

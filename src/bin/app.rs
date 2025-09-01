@@ -1,13 +1,19 @@
-use actix_web::{middleware, HttpServer};
+use actix_web::{middleware, middleware::Logger, HttpServer};
 use rest_api_chm::configure_app;
+use tracing_subscriber::EnvFilter;
 
 #[actix_web::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    // Your code here
+    tracing_subscriber::fmt()
+        .with_env_filter(EnvFilter::from_default_env().add_directive("info".parse().unwrap()))
+        .init();
     HttpServer::new(|| {
-        actix_web::App::new().wrap(middleware::NormalizePath::trim()).configure(configure_app)
+        actix_web::App::new()
+            .wrap(middleware::NormalizePath::trim())
+            .wrap(Logger::default())
+            .configure(configure_app)
     })
-    .bind("127.0.0.1:8080")?
+    .bind("0.0.0.0:8080")?
     .run()
     .await?;
     Ok(())

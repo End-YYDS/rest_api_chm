@@ -1,5 +1,5 @@
-//#![allow(non_camel_case_types)]
-//#![allow(dead_code)]
+#![allow(non_camel_case_types)]
+#![allow(dead_code)]
 use crate::handles::handles_scope;
 use actix_web::web::{scope, ServiceConfig};
 use serde::Deserialize;

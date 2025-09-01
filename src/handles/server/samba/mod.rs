@@ -1,4 +1,4 @@
-use actix_web::{post, web};
+use actix_web::{get, post, web};
 
 use crate::{
     commons::{
@@ -18,6 +18,7 @@ mod logs;
 mod shares;
 mod types;
 
+#[get("")]
 async fn samba_root(_data: web::Json<UuidRequest>) -> web::Json<SambaResponse> {
     let _ = _data;
     web::Json(generate_test_samba_response())
@@ -68,10 +69,7 @@ fn generate_test_samba_response() -> SambaResponse {
 }
 
 pub fn samba_scope() -> actix_web::Scope {
-    actix_web::web::scope("/samba")
-        .route("", web::get().to(samba_root))
-        .route("/", web::get().to(samba_root))
-        .service(action_scope())
+    actix_web::web::scope("/samba").service(samba_root).service(action_scope())
 }
 
 fn action_scope() -> actix_web::Scope {

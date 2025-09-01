@@ -1,5 +1,5 @@
 #![allow(unused)]
-use actix_web::{post, web};
+use actix_web::{get, post, web};
 use serde::{Deserialize, Serialize};
 
 use crate::{
@@ -13,6 +13,7 @@ use crate::{
 mod logs;
 mod types;
 
+#[get("")]
 async fn apache_root(data: web::Json<UuidRequest>) -> web::Json<ApacheResponse> {
     println!("{:#?}", data);
     web::Json(generate_test_apache_response())
@@ -68,10 +69,7 @@ fn generate_test_apache_response() -> ApacheResponse {
 }
 
 pub fn apache_scope() -> actix_web::Scope {
-    web::scope("/apache")
-        .route("", web::get().to(apache_root))
-        .route("/", web::get().to(apache_root))
-        .service(action_scope())
+    web::scope("/apache").service(apache_root).service(action_scope())
 }
 
 fn action_scope() -> actix_web::Scope {
