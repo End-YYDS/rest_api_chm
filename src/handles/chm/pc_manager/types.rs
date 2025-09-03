@@ -1,4 +1,7 @@
+use crate::commons::ResponseResult;
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
+
 #[derive(Debug, Deserialize)]
 pub struct PCManagerRequest {
     #[serde(rename = "Ip")]
@@ -15,15 +18,15 @@ pub struct Uuid {
     pub ip:       String,
 }
 
-#[derive(Debug, Serialize)]
-pub struct Pcs {
-    pub uuid: Uuid,
-}
+// #[derive(Debug, Serialize)]
+// pub struct Pcs {
+//     pub uuid: Uuid,
+// }
 
 #[derive(Debug, Serialize)]
 pub struct PcInformation {
     #[serde(rename = "Pcs")]
-    pub pcs:    Pcs,
+    pub pcs:    HashMap<String, Uuid>,
     #[serde(rename = "Length")]
     pub length: usize,
 }
@@ -40,6 +43,10 @@ pub struct DeletePcRequest {
     pub uuids:     Vec<String>,
     #[serde(rename = "Passwords")]
     pub passwords: Vec<String>,
+}
+#[derive(Debug, Serialize)]
+pub struct DeletePcResponse {
+    pub uuids: HashMap<String, ResponseResult>,
 }
 
 #[derive(Debug, Deserialize)]

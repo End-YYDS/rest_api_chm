@@ -3,9 +3,9 @@ use actix_web::{get, post, web, Scope};
 use crate::{
     commons::{ResponseResult, ResponseType},
     handles::chm::pc_manager::types::{
-        DeletePcGroupRequest, DeletePcRequest, GetPcgroupResponseResult, PCManagerRequest,
-        PatchPcgroupRequest, PcInformation, Pcs, PostPcgroupRequest, PutPcgroupRequest,
-        SpecificRequest, Uuid, UuidsRequest,
+        DeletePcGroupRequest, DeletePcRequest, DeletePcResponse, GetPcgroupResponseResult,
+        PCManagerRequest, PatchPcgroupRequest, PcInformation, PostPcgroupRequest,
+        PutPcgroupRequest, SpecificRequest, Uuid, UuidsRequest,
     },
 };
 
@@ -44,12 +44,12 @@ async fn add(data: web::Json<PCManagerRequest>) -> web::Json<ResponseResult> {
 
 #[get("/all")]
 async fn all() -> web::Json<PcInformation> {
-    web::Json(PcInformation {
-        pcs:    Pcs {
-            uuid: Uuid { hostname: "localhost1".to_string(), ip: "127.0.0.1".to_string() },
-        },
-        length: 1,
-    })
+    let mut pcs_map = std::collections::HashMap::new();
+    pcs_map.insert(
+        "uuid1".to_string(),
+        Uuid { hostname: "localhost1".to_string(), ip: "127.0.0.1".to_string() },
+    );
+    web::Json(PcInformation { pcs: pcs_map, length: 1 })
 }
 
 // #[get("/specific")]
@@ -66,15 +66,24 @@ async fn all() -> web::Json<PcInformation> {
 #[get("/specific")]
 async fn specific(q: web::Json<SpecificRequest>) -> web::Json<PcInformation> {
     dbg!(&q);
-    web::Json(PcInformation {
-        pcs:    Pcs { uuid: Uuid { hostname: "localhost2".to_string(), ip: "127.0.0.1".into() } },
-        length: 1,
-    })
+    let mut pcs_map = std::collections::HashMap::new();
+    pcs_map.insert(
+        "uuid2".to_string(),
+        Uuid { hostname: "localhost2".to_string(), ip: "127.0.0.1".to_string() },
+    );
+    web::Json(PcInformation { pcs: pcs_map, length: 1 })
 }
 
-async fn delete_pc(data: web::Json<DeletePcRequest>) -> web::Json<ResponseResult> {
-    let _ = data;
-    web::Json(ResponseResult { r#type: ResponseType::Ok, message: "Delete PC".to_string() })
+async fn delete_pc(data: web::Json<DeletePcRequest>) -> web::Json<DeletePcResponse> {
+    dbg!(&data);
+    let mut result_map = std::collections::HashMap::new();
+    for uuid in &data.uuids {
+        result_map.insert(
+            uuid.clone(),
+            ResponseResult { r#type: ResponseType::Ok, message: "Deleted".to_string() },
+        );
+    }
+    web::Json(DeletePcResponse { uuids: result_map })
 }
 
 #[post("/reboot")]
